@@ -1,1 +1,0 @@
-var neo4jd3 = new Neo4jd3('.selector', options);
