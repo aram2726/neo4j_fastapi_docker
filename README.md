@@ -1,10 +1,10 @@
-# neo4j_spark_fastapi_docker
+# neo4j_fastapi_docker
 
-* ###Install docker
+* ### Install docker
   
-* ###Install docker-compose
+* ### Install docker-compose
 
-* ###Run docekr-compose
+* ### Run docekr-compose
 
 ```shell
 $ docker-compose build
