@@ -84,31 +84,41 @@ class Neo4jDBClient(AbstractBaseDBClient):
 
     @staticmethod
     def _create_relation(tx, node_1: str, relation: str, node_2: str, where: Dict):
+        node_1_prefix = f"{node_1[0].lower()}1"
+        node_2_prefix = f"{node_2[0].lower()}2"
+        node_1 = node_1.capitalize()
+        node_2 = node_2.capitalize()
+
         query = f"""
-        MATCH ({node_1[0].lower()}1:{node_1.capitalize()}), ({node_2[0].lower()}2:{node_2.capitalize()})
-        WHERE {node_1[0].lower()}1.{where["key"]} {where["condition"]} {node_2[0].lower()}2.{where["value"]}
-        CREATE ({node_1[0].lower()}1)-[r:{relation.upper()}]->({node_2[0].lower()}2)
+        MATCH ({node_1_prefix}:{node_1}), ({node_2_prefix}:{node_2})
+        WHERE {node_1_prefix}.{where["key"]} {where["condition"]} {node_2_prefix}.{where["value"]}
+        CREATE ({node_1_prefix})-[r:{relation.upper()}]->({node_2_prefix})
         """
         result = tx.run(query)
         return result
 
     @staticmethod
     def _create(tx, node_name: str, data: dict):
+        prefix = node_name[0].lower()
+        node_name = node_name.capitalize()
+
         k_v_pairs = [f"{key}: ${key}" for key in data.keys()]
         values = []
         for pair in k_v_pairs:
             values.append(f"{pair}")
         query = f"""
-        CREATE ({node_name[0].lower()}:{node_name.capitalize()}
+        CREATE ({prefix}:{node_name}
         { {" ,".join(values)} } 
-        ) RETURN {node_name[0].lower()}""".replace("'", "")
+        ) RETURN {prefix}""".replace("'", "")
         result = tx.run(query, **data)
         return result
 
     @staticmethod
     def _find_all(tx, node_name: str):
+        prefix = node_name[0].lower()
+        node_name = node_name.capitalize()
         query = (
-            f"MATCH ({node_name[0].lower()}:{node_name.capitalize()}) RETURN {node_name[0].lower()}"
+            f"MATCH ({prefix}:{node_name}) RETURN {prefix}"
         )
         result = tx.run(query)
         return [record for record in result]
@@ -116,10 +126,12 @@ class Neo4jDBClient(AbstractBaseDBClient):
     @staticmethod
     def _filter(tx, node_name: str, key: str, condition: str, value: str):
         condition_val = CONDITIONS_MAP.get(condition, "=")
+        prefix = node_name[0].lower()
+        node_name = node_name.capitalize()
         query = (
-            f"MATCH ({node_name[0].lower()}:{node_name.capitalize()}) "
-            f"WHERE {node_name[0].lower()}.{key} {condition_val} ${key} "
-            f"RETURN {node_name[0].lower()}"
+            f"MATCH ({prefix}:{node_name}) "
+            f"WHERE {prefix}.{key} {condition_val} ${key} "
+            f"RETURN {prefix}"
         )
         result = tx.run(query, **{key: value})
         return [record for record in result]
