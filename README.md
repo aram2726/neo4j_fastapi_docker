@@ -10,3 +10,5 @@
 $ docker-compose build
 $ docker-compose up
 ```
+
+![alt text](./static/graph.png)
