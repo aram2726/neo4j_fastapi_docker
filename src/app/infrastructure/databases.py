@@ -92,7 +92,7 @@ class Neo4jDBClient(AbstractBaseDBClient):
         query = f"""
         MATCH ({node_1_prefix}:{node_1}), ({node_2_prefix}:{node_2})
         WHERE {node_1_prefix}.{where["key"]} {where["condition"]} {node_2_prefix}.{where["value"]}
-        CREATE ({node_1_prefix})-[r:{relation.upper()}]->({node_2_prefix})
+        MERGE ({node_1_prefix})-[r:{relation.upper()}]->({node_2_prefix})
         """
         result = tx.run(query)
         return result
@@ -107,7 +107,7 @@ class Neo4jDBClient(AbstractBaseDBClient):
         for pair in k_v_pairs:
             values.append(f"{pair}")
         query = f"""
-        CREATE ({prefix}:{node_name}
+        MERGE ({prefix}:{node_name}
         { {" ,".join(values)} } 
         ) RETURN {prefix}""".replace("'", "")
         result = tx.run(query, **data)

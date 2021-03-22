@@ -3,7 +3,6 @@ from abc import abstractmethod
 from collections import namedtuple
 from typing import Dict
 from typing import List
-from typing import Iterable
 
 from src.app.core.repositories import BaseManageableRepository
 
