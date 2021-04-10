@@ -138,6 +138,6 @@ class Neo4jDBClient(AbstractBaseDBClient):
 
     @staticmethod
     def _get_graph(tx):
-        query = "MATCH (c1:Country), (c2:City), (c3:Customer), (c4:Company) RETURN c1, c2, c3, c4"
+        query = "MATCH (c1:Country)-[]-(c2:City)-[]-(c3:Customer)-[]-(c4:Company) RETURN c1, c2, c3, c4"
         result = tx.run(query)
         return [record for record in result]
